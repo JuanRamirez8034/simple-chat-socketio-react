@@ -1,0 +1,23 @@
+{
+  "name": "chat-whith-socketio",
+  "version": "1.0.0",
+  "description": "Servidor para chat en tiempo real con socketio y express",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build":"npm run --prefix ../frontend install && npm run --prefix ../frontend build"
+  },
+  "type": "module",
+  "author": "juanramirez8034@gamil.com",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "socket.io": "^4.7.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
