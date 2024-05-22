@@ -23,16 +23,38 @@ export const io = new SocketioServer(server);
 //   cors: {origin: 'http://localhost:5173'}
 // });
 
+let activeUsers = 0;
+const emitActiveUsers = (socket) => socket.broadcast.emit('activeUsers', activeUsers);
+
 // creando un evento (se dispara cuando sucede algo) para cuando suceda una conexion
 io.on('connection', socket => {
-  console.log('Cliente conectado');
+  activeUsers++;
+  console.log('Cliente conectado '+ socket.id + ', Usuarios activos ' + activeUsers);
+
   // escuchando eventos luego de conectarse, el evento usado sera message
   socket.on('message', message => {
-    console.log(`Message recived: ${message}`);
+    console.log(`Message recived from: ${message.user}`);
     // emitiendo evento de respuesta a todos los clientes, excepto al que emitio el mensaje desde el cliente
     socket.broadcast.emit('message', {
-      body: message,
-      from: socket.id
+      body: message.message,
+      from: message.user,
+      id: socket.id,
     });
-  })
+  });
+
+  // emitir valores de los usuarios conectados
+  emitActiveUsers(socket);
+
+  // escuchando los usuarios que se desconectan
+  socket.on('disconnect', () => {
+    activeUsers--;
+    console.log('Cliente desconectado, Usuarios activos ' + activeUsers);
+    // emitir valores de los usuarios conectados
+    emitActiveUsers(socket);
+  });
+});
+
+app.get('/users', (req, resp)=>{ 
+  console.log('activeUsers');
+  resp.send({activeUsers})
 });
