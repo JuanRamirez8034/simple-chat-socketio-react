@@ -21,6 +21,7 @@ export default function ChatForm({className, emitValues}:ChatFormProps) {
     if(message.trim() === '') return;
     emitValues(message.trim());
     event.currentTarget.querySelector('textarea')!.value = ''
+    event.currentTarget.querySelector('textarea')?.focus();
     setMessage('');
   }
 
