@@ -4,6 +4,8 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 import { Server as SocketioServer } from "socket.io";
+import { Messages } from "./messages.js";
+import { TimmerActions } from "./timerAction.js";
 
 
 // servidor express
@@ -23,24 +25,47 @@ export const io = new SocketioServer(server);
 //   cors: {origin: 'http://localhost:5173'}
 // });
 
+const viableMessages = new Messages({limit:300});
+const timerViableMsgs = new TimmerActions();
 let activeUsers = 0;
+
 const emitActiveUsers = (socket) => socket.broadcast.emit('activeUsers', activeUsers);
+
+const emitMessage = (socket) => {
+  socket.on('message', message => {
+    // console.log(`Message recived from: ${message.user}`);
+    const newMessage = {
+      body: message.message,
+      from: message.user,
+      id: socket.id,
+    };
+    viableMessages.add(newMessage);
+    // emitiendo evento de respuesta a todos los clientes, excepto al que emitio el mensaje desde el cliente
+    socket.broadcast.emit('message', newMessage);
+    console.log('Mesnages disponibles temporalmente: '+viableMessages.get.length);
+  });
+};
+
+const deleteAllMessages = () => {
+  viableMessages.deteleAll();
+  console.log('Eliminando todos los mensajes');
+};
 
 // creando un evento (se dispara cuando sucede algo) para cuando suceda una conexion
 io.on('connection', socket => {
   activeUsers++;
   console.log('Cliente conectado '+ socket.id + ', Usuarios activos ' + activeUsers);
 
+  // si es el primer usuario en conectarse se creara la tarea de eliminar los mensajes en 1h
+  if(activeUsers >= 1 && !timerViableMsgs.exist){
+    const hoursTime = TimmerActions.getSecondsHour(1);
+    console.log(`Eliminar mensajes luego de "${hoursTime} segundos"`);
+    timerViableMsgs.setAction(deleteAllMessages);
+    timerViableMsgs.setTimerInterval(hoursTime);
+  }
+
   // escuchando eventos luego de conectarse, el evento usado sera message
-  socket.on('message', message => {
-    console.log(`Message recived from: ${message.user}`);
-    // emitiendo evento de respuesta a todos los clientes, excepto al que emitio el mensaje desde el cliente
-    socket.broadcast.emit('message', {
-      body: message.message,
-      from: message.user,
-      id: socket.id,
-    });
-  });
+  emitMessage(socket);
 
   // emitir valores de los usuarios conectados
   emitActiveUsers(socket);
@@ -48,13 +73,21 @@ io.on('connection', socket => {
   // escuchando los usuarios que se desconectan
   socket.on('disconnect', () => {
     activeUsers--;
+    if(activeUsers <= 0 && timerViableMsgs.exist) {
+      deleteAllMessages();
+      timerViableMsgs.clearInterval();
+    }
     console.log('Cliente desconectado, Usuarios activos ' + activeUsers);
     // emitir valores de los usuarios conectados
     emitActiveUsers(socket);
   });
 });
 
+// rutas
 app.get('/users', (req, resp)=>{ 
-  console.log('activeUsers');
-  resp.send({activeUsers})
+  resp.json({activeUsers}).end();
+});
+
+app.get('/users/getLastMessages', (req, resp)=>{ 
+  resp.status(200).json({lastMessages: viableMessages.get}).end();
 });
