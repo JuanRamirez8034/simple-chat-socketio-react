@@ -104,7 +104,7 @@ export default function Header({signal}:HeaderProps) {
         <h1 className="text-slate-100 font-mono font-bold text-lg w-full flex items-center gap-4">Chatea <span><CiChat1 className="text-3xl" /></span></h1>
         <div className="relative">
           <button type="button" className={`text-slate-100 font-bold text-xl rounded-full hover:bg-slate-400 aspect-square px-2 ${toggle ? "bg-slate-400" :""}` } onClick={()=> {setToggle(value => !value)}}><CiMenuKebab /></button>
-          <div className={`w-48 min-h-6 absolute z-10 right-0 bg-slate-400 rounded-xl shadow overflow-hidden ${toggle ? "" :"hidden"}`} style={{"bottom": "-3.6rem"}}>
+          <div className={`w-48 min-h-6 absolute z-10 right-0 bg-slate-400 rounded-xl shadow overflow-hidden -bottom-24 ${toggle ? "" :"hidden"}`}>
             <button 
               type="button" 
               className="w-full text-center text-base text-slate-100 p-3 hover:bg-slate-100 hover:text-slate-400 transition-all"

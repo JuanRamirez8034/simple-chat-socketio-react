@@ -35,11 +35,19 @@ export default function Chat() {
   // ejecutando el la escucha del servidor al iniciar el componente
   useEffect(()=> {
 
+    (async () => {
+      // obteneindo los mensajes
+      const lastMessages = await ApiService.getLastMessages();
+      const tempMessages = (messages.length !== 0) ? [...lastMessages, ...messages] : [...messages, ...lastMessages];
+      setMessages(tempMessages);
+    })();
+
     // escuchando el valor proveniente del backend
     socketio.on('message', (message:OnResponse) => {
       console.log(`Message response `, message);
       concactMessages(message); // agregando el mensaje nuevo proveniente del backend
     });
+
 
     // escuchando los usuarios conectados
     socketio.on('activeUsers', setActiveUser);
@@ -67,7 +75,7 @@ export default function Chat() {
         className='text-white flex w-full relative bg-slate-200' 
         style={{'height': 'calc(100vh - 4.75rem)', 'backgroundImage': `url("${storage.getBackgroundUrl}")`, "backgroundRepeat": "no-repeat", "backgroundPosition": "center center", "backgroundSize": "100% 100%"}}
       >
-        <div aria-label='Usuarios activos' className='w-20 p-2 absolute left-2 top-2 bg-blue-300 rounded-md shadow-lg flex gap-4 justify-center items-center text-slate-700'>
+        <div aria-label='Usuarios activos' className='w-20 p-2 absolute z-10 left-2 top-2 bg-blue-300 rounded-md shadow-lg flex gap-4 justify-center items-center text-slate-700'>
           <FaUser /><span>{activeUser}</span>
         </div>
         <ChatMessagesList messages={messages}/>
