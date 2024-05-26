@@ -1,3 +1,4 @@
+import { MessageModel } from "../components/Message";
 
 
 type ActiveUsersResponse = { activeUsers: number };
@@ -15,6 +16,21 @@ export class ApiService {
     } catch (error) {
       console.error('[service] Active users request error ' + error);
       return {activeUsers:0}
+    }
+  }
+
+  /**
+   * Obtener los mensajes disponibles
+   * @returns Promise<MessageModel[]>
+   */
+  public static async getLastMessages():Promise<MessageModel[]>{
+    try {
+      const resp = await fetch('/users/getLastMessages');
+      const json = await resp.json() as {lastMessages: MessageModel[]};
+      return json.lastMessages;
+    } catch (error) {
+      console.error('[Service] Last messages request error')
+      return[];
     }
   }
 }
