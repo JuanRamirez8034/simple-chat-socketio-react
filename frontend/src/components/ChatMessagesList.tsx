@@ -59,7 +59,7 @@ export default function ChatMessagesList({ messages }: ChatMessagesListProps) {
 
   return (
     <>
-      <div className="list-none flex flex-col justify-end w-full relative" style={{"height": "75vh"}}>
+      <div className="flex flex-col justify-end w-full relative" style={{height: 'calc(100vh - 13.65rem)'}}>
 
         <button 
           onClick={() => scrollToBotton(true)}
@@ -67,7 +67,7 @@ export default function ChatMessagesList({ messages }: ChatMessagesListProps) {
           className={`absolute bottom-2 right-8 bg-blue-400 text-slate-100 p-4 text-3xl rounded-full shadow-lg transition-all active:bg-blue-500 ${(showForceBottonButton) ?  'hidden opacity-0' : 'block opacity-100' }`}
         ><FaArrowDown /></button>
 
-        <div ref={scrollContainerRef} className="list-none block justify-end w-full px-6 overflow-y-scroll overflow-x-hidden h-100">
+        <div ref={scrollContainerRef} className="block w-full px-6 overflow-y-auto overflow-x-hidden">
           {
             messages.map((msg, index) => (
               <div
