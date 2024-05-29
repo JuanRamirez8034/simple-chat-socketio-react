@@ -72,14 +72,19 @@ export default function Chat() {
   return (
     <>
       <div 
-        className='text-white flex w-full relative bg-slate-200' 
-        style={{'height': 'calc(100vh - 4.75rem)', 'backgroundImage': `url("${storage.getBackgroundUrl}")`, "backgroundRepeat": "no-repeat", "backgroundPosition": "center center", "backgroundSize": "100% 100%"}}
+        className='text-white flex w-full relative bg-slate-200 flex-col flex-1 overflow-hidden' 
+        style={{'backgroundImage': `url("${storage.getBackgroundUrl}")`, "backgroundRepeat": "no-repeat", "backgroundPosition": "center center", "backgroundSize": "100% 100%"}}
       >
+
         <div aria-label='Usuarios activos' className='w-20 p-2 absolute z-10 left-2 top-2 bg-blue-300 rounded-md shadow-lg flex gap-4 justify-center items-center text-slate-700'>
           <FaUser /><span>{activeUser}</span>
         </div>
-        <ChatMessagesList messages={messages}/>
-        <div className='absolute bottom-0 p-4 w-full'>
+
+        <div className='flex-grow'>
+          <ChatMessagesList messages={messages}/>
+        </div>
+
+        <div className='w-full p-4 pt-1 flex-none'>
           <ChatForm emitValues={sendMessage}/>
         </div>
       </div>

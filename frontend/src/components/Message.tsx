@@ -12,7 +12,7 @@ interface MessageProps extends Pick<MessageModel, 'body'> {
 export default function Message({from, body}:MessageProps) {
   return (
     <>
-      <div className={`mt-4 flex min-w-40 max-w-96 flex-col rounded-md px-2 py-1 font-sans shadow-md ${from === 'me' ? 'ml-auto bg-slate-600' : 'bg-slate-500'}`}>
+      <div className={`mt-4 flex min-w-40 max-w-96 flex-col rounded-2xl px-2 py-1 font-sans shadow-md ${from === 'me' ? 'ml-auto bg-slate-600 rounded-br-none' : 'bg-slate-500 rounded-bl-none'}`}>
         <strong className="w-full text-slate-100">{from === 'me' ? 'Tú' : from}</strong>
         <p className="font-thin text-slate-100">{body}</p>
         <div className="flex justify-end">
