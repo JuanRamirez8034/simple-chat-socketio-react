@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, KeyboardEvent } from "react";
 import { FaRegPaperPlane } from "react-icons/fa";
 import { FaFaceAngry } from "react-icons/fa6";
 import { RiAttachment2 } from "react-icons/ri";
@@ -20,9 +20,18 @@ export default function ChatForm({className, emitValues}:ChatFormProps) {
     event.preventDefault();
     if(message.trim() === '') return;
     emitValues(message.trim());
-    event.currentTarget.querySelector('textarea')!.value = ''
     event.currentTarget.querySelector('textarea')?.focus();
     setMessage('');
+  }
+
+  // resolver el envio al presionar ctrl + s
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.ctrlKey && (event.key === 's' || event.key === 'S')) {
+      event.preventDefault();
+      if (message.trim() === '') return;
+      emitValues(message.trim());
+      setMessage('');
+    }
   }
 
   const onEmote = (emote:string) => {
@@ -39,8 +48,9 @@ export default function ChatForm({className, emitValues}:ChatFormProps) {
         <textarea 
           cols={5} 
           className="textbase max-h-20 min-h-8 w-full text-slate-700 resize-none bg-transparent font-mono outline-none" 
-          placeholder="Escribir mensaje"
+          placeholder='Escribir mensaje... (Para enviar "Ctrl + s")'
           onChange={e => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown }
           value={message}
         ></textarea>
         <div className="flex w-full justify-between">
